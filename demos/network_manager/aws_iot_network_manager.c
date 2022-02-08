@@ -189,11 +189,6 @@ typedef struct IotNetworkManager
 
 #endif /* if WIFI_ENABLED */
 
-/**
- *  @brief Invoked on state changes for each of the network.
- */
-static void _onNetworkStateChangeCallback( uint32_t networkType,
-                                           AwsIotNetworkState_t newState );
 
 /**
  * @brief Taskpool routine to schedule user subscriptions for network state changes.
@@ -681,7 +676,7 @@ static void _dispatchNetworkStateChangeCB( IotTaskPool_t taskPool,
     IotTaskPool_RecycleJob( taskPool, job );
 }
 
-static void _onNetworkStateChangeCallback( uint32_t networkType,
+void _onNetworkStateChangeCallback( uint32_t networkType,
                                            AwsIotNetworkState_t newState )
 {
     IotTaskPoolJob_t job;
@@ -973,7 +968,7 @@ uint32_t AwsIotNetworkManager_EnableNetwork( uint32_t networkTypes )
             ( ethNetwork.state == eNetworkStateUnknown ) )
         {
             enabled |= AWSIOT_NETWORK_TYPE_ETH;
-            ethNetwork.state = eNetworkStateEnabled;
+            // ethNetwork.state = eNetworkStateEnabled;
         }
     #endif
     return enabled;
