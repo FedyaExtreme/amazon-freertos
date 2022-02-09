@@ -81,10 +81,10 @@ void DEMO_RUNNER_RunDemos( void )
 {
     /* These demos are shared with the C SDK and perform their own initialization and cleanup. */
 
-    static demoContext_t mqttDemoContext =
+    static init_context_t mqttDemoContext =
     {
         .networkTypes                = democonfigNETWORK_TYPES,
-        .demoFunction                = DEMO_entryFUNCTION,
+        .Function                    = DEMO_entryFUNCTION,
         .networkConnectedCallback    = DEMO_networkConnectedCallback,
         .networkDisconnectedCallback = DEMO_networkDisconnectedCallback
     };

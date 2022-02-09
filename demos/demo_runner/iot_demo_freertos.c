@@ -50,7 +50,7 @@ static uint32_t demoConnectedNetwork = AWSIOT_NETWORK_TYPE_NONE;
 
 /*-----------------------------------------------------------*/
 
-static uint32_t _getConnectedNetworkForDemo( demoContext_t * pDemoContext )
+static uint32_t _getConnectedNetworkForDemo( init_context_t * pDemoContext )
 {
     uint32_t ret = ( AwsIotNetworkManager_GetConnectedNetworks() & pDemoContext->networkTypes );
 
@@ -76,7 +76,7 @@ static uint32_t _getConnectedNetworkForDemo( demoContext_t * pDemoContext )
 
 /*-----------------------------------------------------------*/
 
-static uint32_t _waitForDemoNetworkConnection( demoContext_t * pDemoContext )
+static uint32_t _waitForDemoNetworkConnection( init_context_t * pDemoContext )
 {
     IotSemaphore_Wait( &demoNetworkSemaphore );
 
@@ -93,7 +93,7 @@ static void onNetworkStateChangeCallback( uint32_t network,
     void * pConnectionParams = NULL, * pCredentials = NULL;
     uint32_t disconnectedNetworks = AWSIOT_NETWORK_TYPE_NONE;
 
-    demoContext_t * pDemoContext = ( demoContext_t * ) pContext;
+    init_context_t * pDemoContext = ( init_context_t * ) pContext;
 
     if( ( state == eNetworkStateEnabled ) && ( demoConnectedNetwork == AWSIOT_NETWORK_TYPE_NONE ) )
     {
@@ -166,7 +166,7 @@ static void onNetworkStateChangeCallback( uint32_t network,
  * @return `EXIT_SUCCESS` if all libraries were successfully initialized;
  * `EXIT_FAILURE` otherwise.
  */
-static int _initialize( demoContext_t * pContext )
+static int _initialize( init_context_t * pContext )
 {
     int status = EXIT_SUCCESS;
     bool commonLibrariesInitialized = false;
@@ -281,7 +281,7 @@ static void _cleanup( void )
 
 void runDemoTask( void * pArgument )
 {
-    demoContext_t * pContext = ( demoContext_t * ) pArgument;
+    init_context_t * pContext = ( init_context_t * ) pArgument;
     const IotNetworkInterface_t * pNetworkInterface = NULL;
     void * pConnectionParams = NULL, * pCredentials = NULL;
     int status;
@@ -311,7 +311,7 @@ void runDemoTask( void * pArgument )
         pCredentials = AwsIotNetworkManager_GetCredentials( demoConnectedNetwork );
 
         /* Run the demo. */
-        status = pContext->demoFunction( true,
+        status = pContext->Function( true,
                                          clientcredentialIOT_THING_NAME,
                                          pConnectionParams,
                                          pCredentials,
