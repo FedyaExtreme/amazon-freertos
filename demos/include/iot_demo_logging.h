@@ -49,8 +49,8 @@
     #endif
 #endif
 
-/* Set the library name to print with the demos. */
-#define LIBRARY_LOG_NAME    ( "DEMO" )
+/* Set the library name to print with the module. */
+#define LIBRARY_LOG_NAME    ( "IOT LOGGING" )
 
 /* Include the logging setup header. This enables the logs. */
 #include "iot_logging_setup.h"

@@ -406,7 +406,7 @@ static IotNetworkManager_t networkManager =
             newState = eNetworkStateDisabled;
         }
 
-        _onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_BLE, newState );
+        onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_BLE, newState );
     }
 
 
@@ -601,12 +601,12 @@ static IotNetworkManager_t networkManager =
         {
             pucIpAddr = ( uint8_t * ) ( &pxEvent->xInfo.xIPReady.xIPAddress.ulAddress[ 0 ] );
             IotLogInfo( "Connected to WiFi access point, ip address: %d.%d.%d.%d.", pucIpAddr[ 0 ], pucIpAddr[ 1 ], pucIpAddr[ 2 ], pucIpAddr[ 3 ] );
-            _onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateEnabled );
+            onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateEnabled );
         }
         else if( pxEvent->xEventType == eWiFiEventDisconnected )
         {
             IotLogInfo( "Disconnected from WiFi access point, reason code: %d.", pxEvent->xInfo.xDisconnected.xReason );
-            _onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateDisabled );
+            onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateDisabled );
         }
     }
 
@@ -676,7 +676,7 @@ static void _dispatchNetworkStateChangeCB( IotTaskPool_t taskPool,
     IotTaskPool_RecycleJob( taskPool, job );
 }
 
-void _onNetworkStateChangeCallback( uint32_t networkType,
+void onNetworkStateChangeCallback( uint32_t networkType,
                                            AwsIotNetworkState_t newState )
 {
     IotTaskPoolJob_t job;
@@ -988,7 +988,7 @@ uint32_t AwsIotNetworkManager_DisableNetwork( uint32_t networkTypes )
             if( _wifiDisable() == true )
             {
                 disabled |= AWSIOT_NETWORK_TYPE_WIFI;
-                _onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateUnknown );
+                onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_WIFI, eNetworkStateUnknown );
             }
         }
     #endif
@@ -1000,7 +1000,7 @@ uint32_t AwsIotNetworkManager_DisableNetwork( uint32_t networkTypes )
             if( _bleDisable() == true )
             {
                 disabled |= AWSIOT_NETWORK_TYPE_BLE;
-                _onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_BLE, eNetworkStateUnknown );
+                onNetworkStateChangeCallback( AWSIOT_NETWORK_TYPE_BLE, eNetworkStateUnknown );
             }
         }
     #endif

@@ -85,7 +85,7 @@ static uint32_t _waitForDemoNetworkConnection( init_context_t * pDemoContext )
 
 /*-----------------------------------------------------------*/
 
-static void onNetworkStateChangeCallback( uint32_t network,
+static void _onNetworkStateChangeCallback( uint32_t network,
                                            AwsIotNetworkState_t state,
                                            void * pContext )
 {
@@ -211,7 +211,7 @@ static int _initialize( init_context_t * pContext )
     {
         /* Subscribe for network state change from Network Manager. */
         if( AwsIotNetworkManager_SubscribeForStateChange( pContext->networkTypes,
-                                                          onNetworkStateChangeCallback,
+                                                          _onNetworkStateChangeCallback,
                                                           pContext,
                                                           &subscription ) != pdTRUE )
         {

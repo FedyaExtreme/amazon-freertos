@@ -83,7 +83,7 @@ void DEMO_RUNNER_RunDemos( void )
 
     static init_context_t mqttDemoContext =
     {
-        .networkTypes                = democonfigNETWORK_TYPES,
+        .networkTypes                = configNETWORK_TYPES,
         .Function                    = DEMO_entryFUNCTION,
         .networkConnectedCallback    = DEMO_networkConnectedCallback,
         .networkDisconnectedCallback = DEMO_networkDisconnectedCallback
@@ -91,6 +91,6 @@ void DEMO_RUNNER_RunDemos( void )
 
     Iot_CreateDetachedThread( runDemoTask,
                               &mqttDemoContext,
-                              democonfigDEMO_PRIORITY,
-                              democonfigDEMO_STACKSIZE );
+                              config_PRIORITY,
+                              config_STACKSIZE );
 }

@@ -183,7 +183,7 @@ uint32_t AwsIotNetworkManager_DisableNetwork( uint32_t ulNetworkTypes );
 /**
  *  @brief Invoked on state changes for each of the network.
  */
-void _onNetworkStateChangeCallback( uint32_t networkType,
+void onNetworkStateChangeCallback( uint32_t networkType,
                                            AwsIotNetworkState_t newState );
 
 /**
