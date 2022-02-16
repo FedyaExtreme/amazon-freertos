@@ -33,12 +33,11 @@
 
 /* Standard includes. */
 #include <stdio.h>
-
+#include <time.h>
 /* Platform clock include. */
 #include "platform/iot_platform_types_freertos.h"
 #include "platform/iot_clock.h"
 #include "task.h"
-
 /* Configure logs for the functions in this file. */
 #ifdef IOT_LOG_LEVEL_PLATFORM
     #define LIBRARY_LOG_LEVEL        IOT_LOG_LEVEL_PLATFORM
@@ -88,14 +87,23 @@ bool IotClock_GetTimestring( char * pBuffer,
                              size_t bufferSize,
                              size_t * pTimestringLength )
 {
-    uint64_t milliSeconds = IotClock_GetTimeMs();
+    time_t now;
+    struct tm timeinfo;
+    char strftime_buf[64];
     int timestringLength = 0;
 
     configASSERT( pBuffer != NULL );
     configASSERT( pTimestringLength != NULL );
 
+    time(&now);
+
+    setenv("TZ", "UTC", 1);
+    tzset();
+
+    localtime_r(&now, &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
     /* Convert the localTime struct to a string. */
-    timestringLength = snprintf( pBuffer, bufferSize, "%llu", milliSeconds );
+    timestringLength = snprintf( pBuffer, bufferSize, "%s", strftime_buf );
 
     /* Check for error from no string */
     if( timestringLength == 0 )
