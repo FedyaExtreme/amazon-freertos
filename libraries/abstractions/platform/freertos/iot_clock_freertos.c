@@ -101,7 +101,7 @@ bool IotClock_GetTimestring( char * pBuffer,
     tzset();
 
     localtime_r(&now, &timeinfo);
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%b %d %X %Y", &timeinfo);
     /* Convert the localTime struct to a string. */
     timestringLength = snprintf( pBuffer, bufferSize, "%s", strftime_buf );
 
