@@ -253,6 +253,17 @@ static IotNetworkServerInfo_t tcpIPConnectionParams = { 0 };
     };
 #endif
 
+#if CELL_ENABLED
+    static IotNMNetwork_t cellNetwork =
+    {
+        .type              = AWSIOT_NETWORK_TYPE_CELL,
+        .link              = IOT_LINK_INITIALIZER,
+        .state             = eNetworkStateUnknown,
+        .pNetworkInterface = IOT_NETWORK_INTERFACE_AFR,
+        .pCredentials      = &tcpIPCredentials,
+        .pConnectionParams = &tcpIPConnectionParams
+    };
+#endif
 
 static IotNetworkManager_t networkManager =
 {
@@ -810,6 +821,10 @@ BaseType_t AwsIotNetworkManager_Init( void )
                 IotListDouble_InsertTail( &networkManager.networks, &ethNetwork.link );
             #endif
 
+            #if CELL_ENABLED
+                IotListDouble_InsertTail( &networkManager.networks, &cellNetwork.link );
+            #endif
+
             #if BLE_ENABLED
                 IotListDouble_InsertTail( &networkManager.networks, &bleNetwork.link );
                 /* Registration of network event callback for BLE is handled within _bleEnable() */
@@ -969,6 +984,14 @@ uint32_t AwsIotNetworkManager_EnableNetwork( uint32_t networkTypes )
         {
             enabled |= AWSIOT_NETWORK_TYPE_ETH;
             // ethNetwork.state = eNetworkStateEnabled;
+        }
+    #endif
+    #if CELL_ENABLED
+        if( ( ( networkTypes & AWSIOT_NETWORK_TYPE_CELL ) == AWSIOT_NETWORK_TYPE_CELL ) &&
+            ( cellNetwork.state == eNetworkStateUnknown ) )
+        {
+            enabled |= AWSIOT_NETWORK_TYPE_CELL;
+            cellNetwork.state = eNetworkStateEnabled;
         }
     #endif
     return enabled;

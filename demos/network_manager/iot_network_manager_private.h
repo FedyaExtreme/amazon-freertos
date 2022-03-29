@@ -65,6 +65,8 @@
  */
 #define ETH_ENABLED                                     ( ( configENABLED_NETWORKS & AWSIOT_NETWORK_TYPE_ETH ) == AWSIOT_NETWORK_TYPE_ETH )
 
+#define CELL_ENABLED                                     ( ( configENABLED_NETWORKS & AWSIOT_NETWORK_TYPE_CELL ) == AWSIOT_NETWORK_TYPE_CELL )
+
 #define TCPIP_NETWORK_ENABLED                           ( ( configENABLED_NETWORKS & AWSIOT_NETWORK_TYPE_TCP_IP ) != 0 )
 
 /**
