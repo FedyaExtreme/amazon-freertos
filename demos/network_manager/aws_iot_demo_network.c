@@ -178,6 +178,16 @@
             }
         #endif
 
+        #if CELL_ENABLED
+            if( ( ulConnectedNetworks & AWSIOT_NETWORK_TYPE_CELL ) == AWSIOT_NETWORK_TYPE_CELL )
+            {
+                if( prxCreateSecureSocketConnection( pxNetworkContext, AWSIOT_NETWORK_TYPE_CELL ) == pdTRUE )
+                {
+                    return AWSIOT_NETWORK_TYPE_CELL;
+                }
+            }
+        #endif
+
         return AWSIOT_NETWORK_TYPE_NONE;
     }
 
@@ -244,6 +254,15 @@
 
             #if ETH_ENABLED
                 if( pxNetworkContext->ulNetworkType == AWSIOT_NETWORK_TYPE_ETH )
+                {
+                    IotNetworkAfr_Close( pxNetworkContext->pvNetworkConnection );
+                    IotNetworkAfr_Destroy( pxNetworkContext->pvNetworkConnection );
+                    xDeleted = pdTRUE;
+                }
+            #endif
+
+            #if CELL_ENABLED
+                if( pxNetworkContext->ulNetworkType == AWSIOT_NETWORK_TYPE_CELL )
                 {
                     IotNetworkAfr_Close( pxNetworkContext->pvNetworkConnection );
                     IotNetworkAfr_Destroy( pxNetworkContext->pvNetworkConnection );
