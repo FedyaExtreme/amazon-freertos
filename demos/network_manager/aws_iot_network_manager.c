@@ -991,7 +991,7 @@ uint32_t AwsIotNetworkManager_EnableNetwork( uint32_t networkTypes )
             ( cellNetwork.state == eNetworkStateUnknown ) )
         {
             enabled |= AWSIOT_NETWORK_TYPE_CELL;
-            // cellNetwork.state = eNetworkStateEnabled;
+            cellNetwork.state = eNetworkStateEnabled;
         }
     #endif
     return enabled;
