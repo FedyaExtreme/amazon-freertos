@@ -120,7 +120,7 @@ static void prvLoggingTask( void * pvParameters )
         /* Block to wait for the next string to print. */
         if( xQueueReceive( xQueue, &pcReceivedString, portMAX_DELAY ) == pdPASS )
         {
-            configPRINT_STRING( pcReceivedString );
+            // configPRINT_STRING( pcReceivedString );
             vPortFree( ( void * ) pcReceivedString );
         }
     }

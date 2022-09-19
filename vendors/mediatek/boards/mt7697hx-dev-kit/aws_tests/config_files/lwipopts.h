@@ -41,7 +41,7 @@
 #include "lwipopts_freertos.h"
 
 #if defined(MTK_MDNS_ENABLE)
-#define LWIP_IPV6                       1
+#define LWIP_IPV6                       0
 #define IP_REASS_MAXAGE                 60 // 3
 #define LWIP_IPV6_FRAG                  1
 #define LWIP_MULTICAST_PING             1

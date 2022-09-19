@@ -368,7 +368,8 @@ IotMqttError_t _IotMqtt_CreateOperation( _mqttConnection_t * pMqttConnection,
 
     /* Allocate memory for a new operation. */
     pOperation = IotMqtt_MallocOperation( sizeof( _mqttOperation_t ) );
-
+    IotLogError( "(MQTT operation) malloc size %d",
+                     sizeof( _mqttOperation_t ) );
     if( pOperation == NULL )
     {
         IotLogError( "(MQTT connection %p) Failed to allocate memory for new "

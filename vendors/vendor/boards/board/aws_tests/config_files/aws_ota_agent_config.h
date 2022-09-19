@@ -59,7 +59,7 @@
 /**
  * @brief The OTA agent task priority. Normally it runs at a low priority.
  */
-#define otaconfigAGENT_PRIORITY                 tskIDLE_PRIORITY /* FIX ME. */
+#define otaconfigAGENT_PRIORITY                 tskIDLE_PRIORITY+6 /* FIX ME. */
 
 /**
  * @brief The maximum allowed length of the thing name used by the OTA agent.
