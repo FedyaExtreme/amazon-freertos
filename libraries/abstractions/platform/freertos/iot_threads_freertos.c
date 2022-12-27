@@ -91,7 +91,6 @@ static void _threadRoutineWrapper( void * pArgument )
 /*-----------------------------------------------------------*/
 
 bool Iot_CreateDetachedThread( IotThreadRoutine_t threadRoutine,
-                               const char * threadName,
                                void * pArgument,
                                int32_t priority,
                                size_t stackSize )
@@ -116,7 +115,7 @@ bool Iot_CreateDetachedThread( IotThreadRoutine_t threadRoutine,
         pThreadInfo->pArgument = pArgument;
 
         if( xTaskCreate( _threadRoutineWrapper,
-                         threadName,
+                         "iot_thread",
                          ( configSTACK_DEPTH_TYPE ) stackSize,
                          pThreadInfo,
                          priority,

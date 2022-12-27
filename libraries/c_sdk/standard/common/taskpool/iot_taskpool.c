@@ -1066,7 +1066,6 @@ static IotTaskPoolError_t _createTaskPool( const IotTaskPoolInfo_t * const pInfo
     {
         /* Create one thread. */
         if( Iot_CreateDetachedThread( _taskPoolWorker,
-                                      "iot_thread",
                                       pTaskPool,
                                       pTaskPool->priority,
                                       pTaskPool->stackSize ) == false )
@@ -1473,7 +1472,6 @@ static IotTaskPoolError_t _scheduleInternal( _taskPool_t * const pTaskPool,
             IotLogInfo( "Growing a Task pool with a new worker thread..." );
 
             if( Iot_CreateDetachedThread( _taskPoolWorker,
-                                          "iot_thread",
                                           pTaskPool,
                                           pTaskPool->priority,
                                           pTaskPool->stackSize ) )

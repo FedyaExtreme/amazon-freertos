@@ -40,9 +40,10 @@
 #include "aws_iot_ota_agent_internal.h"
 #include "aws_application_version.h"
 #include "aws_iot_ota_cbor.h"
-
+#include "esp_log.h"
+// #include "esp_app_trace.h"
 /* General constants. */
-#define OTA_SUBSCRIBE_WAIT_MS          30000UL
+#define OTA_SUBSCRIBE_WAIT_MS          40000UL
 #define OTA_UNSUBSCRIBE_WAIT_MS        1000UL
 #define OTA_PUBLISH_WAIT_MS            10000UL
 #define OTA_SUBSCRIBE_WAIT_TICKS       pdMS_TO_TICKS( OTA_SUBSCRIBE_WAIT_MS )
@@ -88,6 +89,7 @@ const char pcOTA_String_Failed[] = "FAILED";
 const char pcOTA_String_Succeeded[] = "SUCCEEDED";
 const char pcOTA_String_Rejected[] = "REJECTED";
 
+const char *TAG = "ota_mqtt";
 const char * pcOTA_JobStatus_Strings[ eNumJobStatusMappings ] =
 {
     pcOTA_String_InProgress,
@@ -178,7 +180,7 @@ static bool prvSubscribeToJobNotificationTopics( const OTA_AgentContext_t * pxAg
 
         if( eResult == IOT_MQTT_SUCCESS )
         {
-            OTA_LOG_L1( "[%s] OK: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
+            ESP_LOGE(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
             /* Build the second topic. */
             usTopicLen = ( uint16_t ) snprintf( pcJobTopic, /*lint -e586 Intentionally using snprintf. */
                                                 sizeof( pcJobTopic ),
@@ -187,7 +189,7 @@ static bool prvSubscribeToJobNotificationTopics( const OTA_AgentContext_t * pxAg
         }
         else
         {
-            OTA_LOG_L1( "[%s] Failed: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
+            ESP_LOGE(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
         }
     }
 
@@ -203,12 +205,12 @@ static bool prvSubscribeToJobNotificationTopics( const OTA_AgentContext_t * pxAg
 
         if( eResult == IOT_MQTT_SUCCESS )
         {
-            OTA_LOG_L1( "[%s] OK: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
+            ESP_LOGE(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
             bResult = true;
         }
         else
         {
-            OTA_LOG_L1( "[%s] Failed: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
+            ESP_LOGE(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME, stJobsSubscription.pTopicFilter );
         }
     }
 

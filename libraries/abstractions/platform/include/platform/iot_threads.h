@@ -152,7 +152,6 @@
  */
 /* @[declare_platform_threads_createdetachedthread] */
 bool Iot_CreateDetachedThread( IotThreadRoutine_t threadRoutine,
-                               const char * threadName,
                                void * pArgument,
                                int32_t priority,
                                size_t stackSize );

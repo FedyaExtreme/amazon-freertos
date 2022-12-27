@@ -36,6 +36,9 @@
 
 /* MQTT internal include. */
 #include "private/iot_mqtt_internal.h"
+#include "esp_log.h"
+
+static const char * TAG = "iot_mqtt_validate";
 
 /*-----------------------------------------------------------*/
 
@@ -223,7 +226,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
     /* Check for NULL. */
     if( pPublishInfo == NULL )
     {
-        IotLogError( "Publish information cannot be NULL." );
+        ESP_LOGE(TAG, "Publish information cannot be NULL." );
 
         IOT_SET_AND_GOTO_CLEANUP( false );
     }
@@ -235,7 +238,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
     /* Check topic name for NULL or zero-length. */
     if( pPublishInfo->pTopicName == NULL )
     {
-        IotLogError( "Publish topic name must be set." );
+        ESP_LOGE(TAG, "Publish topic name must be set." );
     }
     else
     {
@@ -244,7 +247,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
 
     if( pPublishInfo->topicNameLength == 0 )
     {
-        IotLogError( "Publish topic name length cannot be 0." );
+        ESP_LOGE(TAG, "Publish topic name length cannot be 0." );
 
         IOT_SET_AND_GOTO_CLEANUP( false );
     }
@@ -258,7 +261,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
     {
         if( pPublishInfo->payloadLength != 0 )
         {
-            IotLogError( "Nonzero payload length cannot have a NULL payload." );
+            ESP_LOGE(TAG, "Nonzero payload length cannot have a NULL payload." );
 
             IOT_SET_AND_GOTO_CLEANUP( false );
         }
@@ -277,7 +280,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
     {
         if( pPublishInfo->qos != IOT_MQTT_QOS_1 )
         {
-            IotLogError( "Publish QoS must be either 0 or 1." );
+            ESP_LOGE(TAG, "Publish QoS must be either 0 or 1." );
 
             IOT_SET_AND_GOTO_CLEANUP( false );
         }
@@ -296,7 +299,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
     {
         if( pPublishInfo->retryMs == 0 )
         {
-            IotLogError( "Publish retry time must be positive." );
+            ESP_LOGE(TAG,"Publish retry time must be positive." );
 
             IOT_SET_AND_GOTO_CLEANUP( false );
         }
@@ -316,7 +319,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
         /* Check for retained message. */
         if( pPublishInfo->retain == true )
         {
-            IotLogError( "AWS IoT does not support retained publish messages." );
+            ESP_LOGE(TAG, "AWS IoT does not support retained publish messages." );
 
             IOT_SET_AND_GOTO_CLEANUP( false );
         }
@@ -328,7 +331,7 @@ bool _IotMqtt_ValidatePublish( bool awsIotMqttMode,
         /* Check topic name length. */
         if( pPublishInfo->topicNameLength > AWS_IOT_MQTT_SERVER_MAX_TOPIC_LENGTH )
         {
-            IotLogError( "AWS IoT does not support topic names longer than %d bytes.",
+            ESP_LOGE(TAG, "AWS IoT does not support topic names longer than %d bytes.",
                          AWS_IOT_MQTT_SERVER_MAX_TOPIC_LENGTH );
 
             IOT_SET_AND_GOTO_CLEANUP( false );
