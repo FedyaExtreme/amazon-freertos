@@ -295,7 +295,7 @@ _IotMqtt_CreateOperation(_mqttConnection_t *pMqttConnection, uint32_t flags,
   /* If the waitable flag is set, make sure that there's no callback. */
   if (waitable == true) {
     if (pCallbackInfo != NULL) {
-      IotLogError("Callback should not be set for a waitable operation.");
+      ESP_LOGE(TAG, "Callback should not be set for a waitable operation.");
 
       return IOT_MQTT_BAD_PARAMETER;
     } else {
@@ -305,15 +305,16 @@ _IotMqtt_CreateOperation(_mqttConnection_t *pMqttConnection, uint32_t flags,
     EMPTY_ELSE_MARKER;
   }
 
-  IotLogDebug("(MQTT connection %p) Creating new operation record.",
-              pMqttConnection);
+  ESP_LOGI(TAG, "(MQTT connection %p) Creating new operation record.",
+           pMqttConnection);
 
   /* Increment the reference count for the MQTT connection when creating a new
    * operation. */
   if (_IotMqtt_IncrementConnectionReferences(pMqttConnection) == false) {
-    IotLogError("(MQTT connection %p) New operation record cannot be created"
-                " for a closed connection",
-                pMqttConnection);
+    ESP_LOGE(TAG,
+             "(MQTT connection %p) New operation record cannot be created"
+             " for a closed connection",
+             pMqttConnection);
 
     IOT_SET_AND_GOTO_CLEANUP(IOT_MQTT_NETWORK_ERROR);
   } else {
@@ -323,11 +324,12 @@ _IotMqtt_CreateOperation(_mqttConnection_t *pMqttConnection, uint32_t flags,
 
   /* Allocate memory for a new operation. */
   pOperation = IotMqtt_MallocOperation(sizeof(_mqttOperation_t));
-  IotLogError("(MQTT operation) malloc size %d", sizeof(_mqttOperation_t));
+  ESP_LOGI(TAG, "(MQTT operation) malloc size %d", sizeof(_mqttOperation_t));
   if (pOperation == NULL) {
-    IotLogError("(MQTT connection %p) Failed to allocate memory for new "
-                "operation record.",
-                pMqttConnection);
+    ESP_LOGE(TAG,
+             "(MQTT connection %p) Failed to allocate memory for new "
+             "operation record.",
+             pMqttConnection);
 
     IOT_SET_AND_GOTO_CLEANUP(IOT_MQTT_NO_MEMORY);
   } else {
@@ -347,9 +349,10 @@ _IotMqtt_CreateOperation(_mqttConnection_t *pMqttConnection, uint32_t flags,
     /* Create a semaphore to wait on for a waitable operation. */
     if (IotSemaphore_Create(&(pOperation->u.operation.notify.waitSemaphore), 0,
                             1) == false) {
-      IotLogError("(MQTT connection %p) Failed to create semaphore for "
-                  "waitable operation.",
-                  pMqttConnection);
+      ESP_LOGE(TAG,
+               "(MQTT connection %p) Failed to create semaphore for "
+               "waitable operation.",
+               pMqttConnection);
 
       IOT_SET_AND_GOTO_CLEANUP(IOT_MQTT_NO_MEMORY);
     } else {
@@ -420,10 +423,9 @@ bool _IotMqtt_DecrementOperationReferences(_mqttOperation_t *pOperation,
                    (taskPoolStatus == IOT_TASKPOOL_CANCEL_FAILED));
 
     if (taskPoolStatus == IOT_TASKPOOL_SUCCESS) {
-      IotLogDebug("(MQTT connection %p, %s operation %p) Job canceled.",
-                  pMqttConnection,
-                  IotMqtt_OperationType(pOperation->u.operation.type),
-                  pOperation);
+      ESP_LOGI(TAG, "(MQTT connection %p, %s operation %p) Job canceled.",
+               pMqttConnection,
+               IotMqtt_OperationType(pOperation->u.operation.type), pOperation);
     } else {
       EMPTY_ELSE_MARKER;
     }
@@ -633,7 +635,7 @@ void _IotMqtt_ProcessKeepAlive(IotTaskPool_t pTaskPool,
       pingStatus = _IotMqtt_managedPing(pMqttConnection);
 
       if (pingStatus != IOT_MQTT_SUCCESS) {
-        ESP_LOGI(TAG,
+        ESP_LOGE(TAG,
                  "(MQTT connection %p) Failed to send PINGREQ packet on the "
                  "network.",
                  pMqttConnection);
@@ -747,11 +749,12 @@ void _IotMqtt_ProcessKeepAlive(IotTaskPool_t pTaskPool,
 
   /* Close the connection on failures. */
   if (status == false) {
-    _IotMqtt_CloseNetworkConnection(IOT_MQTT_KEEP_ALIVE_TIMEOUT,
-                                    pMqttConnection);
-
-    /* Keep-alive has failed and will no longer use this MQTT connection. */
-    _IotMqtt_DecrementConnectionReferences(pMqttConnection);
+    // if (retry_count >= 3) {
+    //   _IotMqtt_CloseNetworkConnection(IOT_MQTT_KEEP_ALIVE_TIMEOUT,
+    //                                   pMqttConnection);
+    //   /* Keep-alive has failed and will no longer use this MQTT connection.
+    //   */ _IotMqtt_DecrementConnectionReferences(pMqttConnection);
+    // }
   } else {
     EMPTY_ELSE_MARKER;
   }

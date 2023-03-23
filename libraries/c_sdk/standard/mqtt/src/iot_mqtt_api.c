@@ -721,9 +721,9 @@ void _IotMqtt_DecrementConnectionReferences(
   (pMqttConnection->references)--;
   IotMqtt_Assert(pMqttConnection->references >= 0);
 
-  IotLogDebug("(MQTT connection %p) Reference count changed from %ld to %ld.",
-              pMqttConnection, (long int)pMqttConnection->references + 1,
-              (long int)pMqttConnection->references);
+  ESP_LOGI(TAG, "(MQTT connection %p) Reference count changed from %ld to %ld.",
+           pMqttConnection, (long int)pMqttConnection->references + 1,
+           (long int)pMqttConnection->references);
 
   /* Check if this connection may be destroyed. */
   if (pMqttConnection->references == 0) {
@@ -736,8 +736,8 @@ void _IotMqtt_DecrementConnectionReferences(
 
   /* Destroy an unreferenced MQTT connection. */
   if (destroyConnection == true) {
-    IotLogDebug("(MQTT connection %p) Connection will be destroyed now.",
-                pMqttConnection);
+    ESP_LOGI(TAG, "(MQTT connection %p) Connection will be destroyed now.",
+             pMqttConnection);
 
     _destroyMqttConnection(pMqttConnection);
   } else {
@@ -888,7 +888,7 @@ IotMqttError_t IotMqtt_Connect(const IotMqttNetworkInfo_t *pNetworkInfo,
     } else if (pConnectInfo->pWillInfo->payloadLength > UINT16_MAX) {
       /* Will message payloads cannot be larger than 65535. This restriction
        * applies only to will messages, and not normal PUBLISH messages. */
-      IotLogError("Will payload cannot be larger than 65535.");
+      ESP_LOGE(TAG, "Will payload cannot be larger than 65535.");
 
       IOT_SET_AND_GOTO_CLEANUP(IOT_MQTT_BAD_PARAMETER);
     } else {
@@ -1143,7 +1143,7 @@ IotMqttError_t IotMqtt_Connect(const IotMqttNetworkInfo_t *pNetworkInfo,
   if (status == IOT_MQTT_SUCCESS) {
     /* Check if a keep-alive job should be scheduled. */
     if (newMqttConnection->keepAliveMs != 0) {
-      IotLogDebug("Scheduling first MQTT keep-alive job.");
+      ESP_LOGI(TAG, "Scheduling first MQTT keep-alive job.");
 
       taskPoolStatus = IotTaskPool_ScheduleDeferred(
           IOT_SYSTEM_TASKPOOL, newMqttConnection->keepAliveJob,
@@ -1478,7 +1478,7 @@ IotMqttError_t IotMqtt_Publish(IotMqttConnection_t mqttConnection,
     if (pPublishOperation != NULL) {
       //   vPortFree(pPublishOperation);
       ESP_LOGI(TAG,
-               "(PUB oper MQTT connection %p, %s operation %p, publish "
+               "(MQTT connection %p, %s type, operation %p, publish "
                "operation %p) ",
                pOperation->pMqttConnection,
                IotMqtt_OperationType(pOperation->u.operation.type), pOperation,
@@ -1496,7 +1496,8 @@ IotMqttError_t IotMqtt_Publish(IotMqttConnection_t mqttConnection,
   /* Calling PUBLISH wrapper to send PUBLISH packet on the network using MQTT
    * LTS PUBLISH API. */
   status = _IotMqtt_managedPublish(mqttConnection, pOperation, pPublishInfo);
-
+  ESP_LOGI(TAG, "(MQTT connection %p) MQTT PUBLISH operation status %d",
+           mqttConnection, status);
   if (status == IOT_MQTT_SUCCESS) {
     /* Processing operation after sending the packet on the network. */
     _IotMqtt_ProcessOperation(pOperation);
