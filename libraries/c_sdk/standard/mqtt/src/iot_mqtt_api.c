@@ -1391,11 +1391,12 @@ IotMqttError_t IotMqtt_Publish(IotMqttConnection_t mqttConnection,
   IOT_FUNCTION_ENTRY(IotMqttError_t, IOT_MQTT_SUCCESS);
   _mqttOperation_t *pOperation = NULL;
 
-  if (*pPublishOperation != NULL) {
-    _IotMqtt_DestroyOperation(*pPublishOperation);
-    *pPublishOperation = NULL;
+  if (pPublishInfo->qos == IOT_MQTT_QOS_1) {
+    if (*pPublishOperation != NULL) {
+      _IotMqtt_DestroyOperation(*pPublishOperation);
+      *pPublishOperation = NULL;
+    }
   }
-
   size_t heap_size = xPortGetFreeHeapSize();
   ESP_LOGI(TAG,
            "Before publish Free heap size: %d, mqtt sizeof %d, pub info %d",

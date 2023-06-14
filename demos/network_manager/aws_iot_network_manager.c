@@ -681,17 +681,6 @@ static void _initializeTCPIPCredentials(void) {
   } else {
     tcpIPCredentials.pAlpnProtos = NULL;
   }
-  char *private_key = calloc(1, 2000);
-  if (!private_key) {
-    ESP_LOGE(TAG, "calloc memory for private key failed");
-    // goto err_buffer;
-  }
-
-  size_t pr_key_len = get_nvs_str(UNIQUE_KEY, private_key, 2000);
-
-  for (size_t i = 0; i < pr_key_len; i++) {
-    ESP_LOGE(TAG, "private_key[]= %c", private_key[i]);
-  }
 
   tcpIPCredentials.maxFragmentLength = 0;
   tcpIPCredentials.disableSni = false;
@@ -699,8 +688,8 @@ static void _initializeTCPIPCredentials(void) {
   tcpIPCredentials.rootCaSize = 0;
   tcpIPCredentials.pClientCert = keyCLIENT_CERTIFICATE_PEM;
   tcpIPCredentials.clientCertSize = sizeof(keyCLIENT_CERTIFICATE_PEM);
-  tcpIPCredentials.pPrivateKey = private_key;
-  tcpIPCredentials.privateKeySize = pr_key_len;
+  tcpIPCredentials.pPrivateKey = keyCLIENT_PRIVATE_KEY_PEM;
+  tcpIPCredentials.privateKeySize = sizeof(keyCLIENT_PRIVATE_KEY_PEM);
 #endif /* if TCPIP_NETWORK_ENABLED */
 }
 
