@@ -591,8 +591,8 @@ static void _dispatchNetworkStateChangeCB(IotTaskPool_t taskPool,
     error = IotTaskPool_Schedule(taskPool, pendingJob, 0);
 
     if (error != IOT_TASKPOOL_SUCCESS) {
-      IotLogError("Failed to schedule a taskpool job, discarding all pending "
-                  "items in queue ");
+      ESP_LOGI(TAG, "Failed to schedule a taskpool job, discarding all pending "
+                    "items in queue ");
 
       (void)IotTaskPool_RecycleJob(taskPool, pendingJob);
       IotContainers_ForEach(&networkManager.pendingInvocations, pLink) {
@@ -653,18 +653,20 @@ void onNetworkStateChangeCallback(uint32_t networkType,
         if (error == IOT_TASKPOOL_SUCCESS) {
           networkManager.isInvocationActive = true;
         } else {
-          IotLogError("Failed to invoke subscription task for network: %d, "
-                      "state: %d, error: %d",
-                      pNetwork->type, newState, error);
+          ESP_LOGI(TAG,
+                   "Failed to invoke subscription task for network: %d, "
+                   "state: %d, error: %d",
+                   pNetwork->type, newState, error);
 
           /* Recycle the job if schedule failed */
           IotTaskPool_RecycleJob(IOT_SYSTEM_TASKPOOL, job);
         }
       }
     } else {
-      IotLogError("Failed to create subscription task for network: %d, state: "
-                  "%d, error: %d",
-                  pNetwork->type, newState, error);
+      ESP_LOGI(TAG,
+               "Failed to create subscription task for network: %d, state: "
+               "%d, error: %d",
+               pNetwork->type, newState, error);
     }
   }
 

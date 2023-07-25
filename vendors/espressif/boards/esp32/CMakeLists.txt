@@ -87,6 +87,7 @@ set(
     "${esp_idf_dir}/components/driver/include"
     "${esp_idf_dir}/components/heap/include"
     "${esp_idf_dir}/components/log/include"
+    "${esp_idf_dir}/components/app_trace/include"
     "${esp_idf_dir}/components/nvs_flash/include"
     "${esp_idf_dir}/components/pthread/include"
     "${esp_idf_dir}/components/newlib/platform_include"
