@@ -406,14 +406,28 @@ static OTA_Err_t prvPublishStatusMessage(OTA_AgentContext_t *pxAgentCtx,
 
   /* If the topic name was built, try to publish the status message to it. */
   if ((ulTopicLen > 0UL) && (ulTopicLen < sizeof(pcTopicBuffer))) {
-    ESP_LOGI(TAG, "[%s] Msg: %s\r\n", OTA_METHOD_NAME, pcMsg);
+    for (size_t i = 0; i < ulMsgSize; i++) {
+      ESP_LOGI(TAG, "[%s] Msg: %c \r\n", OTA_METHOD_NAME, pcMsg[i]);
+    }
+
     eResult = prvPublishMessage(pxAgentCtx, pcTopicBuffer, (uint16_t)ulTopicLen,
                                 &pcMsg[0], ulMsgSize, eQOS);
 
     if (eResult != IOT_MQTT_SUCCESS) {
-      ESP_LOGI(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+      ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
 
-      xRet = kOTA_Err_PublishFailed;
+      eResult =
+          prvPublishMessage(pxAgentCtx, pcTopicBuffer, (uint16_t)ulTopicLen,
+                            &pcMsg[0], ulMsgSize, eQOS);
+      if (eResult != IOT_MQTT_SUCCESS) {
+        ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+        xRet = kOTA_Err_PublishFailed;
+      } else {
+        ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
+                 pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
+
+        xRet = kOTA_Err_None;
+      }
     } else {
       ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
                pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
@@ -563,10 +577,10 @@ static void prvSendCallbackEvent(void *pvCallbackContext,
       /* Send job document received event. */
       xErr = OTA_SignalEvent(&xEventMsg);
     } else {
-      ESP_LOGI(TAG, "Error: No OTA data buffers available.\r\n");
+      ESP_LOGE(TAG, "Error: No OTA data buffers available.\r\n");
     }
   } else {
-    ESP_LOGI(TAG,
+    ESP_LOGE(TAG,
              "Error: buffers are too small %d to contains the payload %d.\r\n",
              OTA_DATA_BLOCK_SIZE, pxPublishData->u.message.info.payloadLength);
   }
@@ -652,7 +666,7 @@ OTA_Err_t prvRequestJob_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
                                   ulMsgLen, IOT_MQTT_QOS_1);
 
       if (eResult != IOT_MQTT_SUCCESS) {
-        ESP_LOGI(TAG, "[%s] Failed to publish MQTT message.\r\n",
+        ESP_LOGE(TAG, "[%s] Failed to publish MQTT message.\r\n",
                  OTA_METHOD_NAME);
         xError = kOTA_Err_PublishFailed;
       } else {
@@ -660,7 +674,7 @@ OTA_Err_t prvRequestJob_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
         xError = kOTA_Err_None;
       }
     } else {
-      ESP_LOGI(TAG, "[%s] Topic too large for supplied buffer.\r\n",
+      ESP_LOGE(TAG, "[%s] Topic too large for supplied buffer.\r\n",
                OTA_METHOD_NAME);
       xError = kOTA_Err_TopicTooLarge;
     }
@@ -711,7 +725,7 @@ OTA_Err_t prvUpdateJobStatus_Mqtt(OTA_AgentContext_t *pxAgentCtx,
       ulMsgSize = prvBuildStatusMessageFinish(pcMsg, sizeof(pcMsg), eStatus,
                                               lReason, lSubReason);
     } else {
-      ESP_LOGI(TAG, "[%s] Unknown status code: %d\r\n", OTA_METHOD_NAME,
+      ESP_LOGE(TAG, "[%s] Unknown status code: %d\r\n", OTA_METHOD_NAME,
                eStatus);
     }
   }
@@ -756,7 +770,7 @@ OTA_Err_t prvInitFileTransfer_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
             &xOTAUpdateDataSubscription, 1, /* Subscriptions count */
             0,                              /* flags */
             OTA_SUBSCRIBE_WAIT_MS) != IOT_MQTT_SUCCESS) {
-      ESP_LOGI(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
+      ESP_LOGE(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
                xOTAUpdateDataSubscription.pTopicFilter);
     } else {
       ESP_LOGI(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME,
@@ -764,7 +778,7 @@ OTA_Err_t prvInitFileTransfer_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
       xResult = kOTA_Err_None;
     }
   } else {
-    ESP_LOGI(TAG, "[%s] Failed to build stream topic.\n\r", OTA_METHOD_NAME);
+    ESP_LOGE(TAG, "[%s] Failed to build stream topic.\n\r", OTA_METHOD_NAME);
   }
 
   return xResult;
@@ -808,7 +822,7 @@ OTA_Err_t prvRequestFileBlock_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
                       otaconfigMAX_NUM_BLOCKS_REQUEST)) {
       xErr = kOTA_Err_None;
     } else {
-      ESP_LOGI(TAG, "[%s] CBOR encode failed.\r\n", OTA_METHOD_NAME);
+      ESP_LOGE(TAG, "[%s] CBOR encode failed.\r\n", OTA_METHOD_NAME);
       xErr = kOTA_Err_FailedToEncodeCBOR;
     }
   }
@@ -827,7 +841,7 @@ OTA_Err_t prvRequestFileBlock_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
     } else {
       /* 0 should never happen since we supply the format strings. It must be
        * overflow. */
-      ESP_LOGI(TAG, "[%s] Failed to build stream topic!\r\n", OTA_METHOD_NAME);
+      ESP_LOGE(TAG, "[%s] Failed to build stream topic!\r\n", OTA_METHOD_NAME);
       xErr = kOTA_Err_TopicTooLarge;
     }
   }
@@ -837,7 +851,7 @@ OTA_Err_t prvRequestFileBlock_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
                                 &pcMsg[0], ulMsgSizeToPublish, IOT_MQTT_QOS_0);
 
     if (eResult != IOT_MQTT_SUCCESS) {
-      ESP_LOGI(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+      ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
       xErr = kOTA_Err_PublishFailed;
     } else {
       ESP_LOGI(TAG, "[%s] OK: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
