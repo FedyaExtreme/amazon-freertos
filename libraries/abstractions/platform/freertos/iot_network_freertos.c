@@ -44,9 +44,8 @@
 #include "private/iot_error.h"
 
 /* FreeRTOS network include. */
-#include "platform/iot_network_freertos.h"
-
 #include "esp_log.h"
+#include "platform/iot_network_freertos.h"
 /* Configure logs for the functions in this file. */
 #ifdef IOT_LOG_LEVEL_NETWORK
 #define LIBRARY_LOG_LEVEL IOT_LOG_LEVEL_NETWORK
@@ -289,6 +288,10 @@ IotNetworkError_t IotNetworkAfr_Create(void *pConnectionInfo,
   IOT_FUNCTION_ENTRY(IotNetworkError_t, IOT_NETWORK_SUCCESS);
   Socket_t tcpSocket = SOCKETS_INVALID_SOCKET;
   int32_t socketStatus = SOCKETS_ERROR_NONE;
+  int32_t count = 0;
+  int32_t interval = 0;
+  int32_t retry_interval = 0;
+  int32_t socket_keepalive_enable = 1;
   SocketsSockaddr_t serverAddress = {0};
   EventGroupHandle_t pConnectionFlags = NULL;
   SemaphoreHandle_t pConnectionMutex = NULL;
@@ -360,6 +363,54 @@ IotNetworkError_t IotNetworkAfr_Create(void *pConnectionInfo,
              socketStatus);
     IOT_SET_AND_GOTO_CLEANUP(IOT_NETWORK_SYSTEM_ERROR);
   }
+
+  /* Enable Host TCP Keepalive */
+  socketStatus = SOCKETS_SetSockOpt(tcpSocket, 0xfff, SOCKETS_SO_TCPKEEPALIVE,
+                                    &socket_keepalive_enable,
+                                    sizeof(socket_keepalive_enable));
+  if (socketStatus != SOCKETS_ERROR_NONE) {
+    ESP_LOGE(TAG, "Host TCP keepalive enable failed %d\n", socketStatus);
+  }
+
+  /* keep_idle, After this much idle time, send Packet */
+  // seconds = downloaded->interval;
+  interval = 7200000UL;
+
+  socketStatus =
+      SOCKETS_SetSockOpt(tcpSocket, 6, SOCKETS_SO_TCPKEEPALIVE_IDLE_TIME,
+                         &interval, sizeof(interval));
+  if (socketStatus != SOCKETS_ERROR_NONE) {
+    ESP_LOGE(TAG, "TCP keepalive Idle time configuration failed :%d\n",
+             socketStatus);
+  }
+
+  /* If don't get ack retry keep_intvl seconds for keep_cnt times */
+  // seconds = downloaded->retry_count;
+  count = 9U;
+
+  socketStatus = SOCKETS_SetSockOpt(tcpSocket, 6, SOCKETS_SO_TCPKEEPALIVE_COUNT,
+                                    &count, sizeof(count));
+  if (socketStatus != SOCKETS_ERROR_NONE) {
+    ESP_LOGE(TAG, "TCP keepalive retry count configuration failed %d\n ",
+             socketStatus);
+  }
+
+  /* TCP keep-alive interval between packets */
+  // seconds = downloaded->retry_interval;
+  retry_interval = 75000UL;
+
+  socketStatus =
+      SOCKETS_SetSockOpt(tcpSocket, 6, SOCKETS_SO_TCPKEEPALIVE_INTERVAL,
+                         &retry_interval, sizeof(retry_interval));
+  if (socketStatus != SOCKETS_ERROR_NONE) {
+    ESP_LOGE(TAG, "TCP keepalive Interval configuration failed :%d\n",
+             socketStatus);
+  }
+
+  ESP_LOGI(TAG,
+           "SetSockOpt LWIP keepalive: Interval %d, Retry Interval %d, "
+           "keepalive count %d\n",
+           interval, retry_interval, count);
 
   /* Set a long timeout for receive. */
   socketStatus = SOCKETS_SetSockOpt(tcpSocket, 0, SOCKETS_SO_RCVTIMEO,
