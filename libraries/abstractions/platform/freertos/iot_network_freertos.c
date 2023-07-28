@@ -374,7 +374,7 @@ IotNetworkError_t IotNetworkAfr_Create(void *pConnectionInfo,
 
   /* keep_idle, After this much idle time, send Packet */
   // seconds = downloaded->interval;
-  interval = 7200000UL;
+  interval = 360000UL;
 
   socketStatus =
       SOCKETS_SetSockOpt(tcpSocket, 6, SOCKETS_SO_TCPKEEPALIVE_IDLE_TIME,
