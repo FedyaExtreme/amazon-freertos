@@ -351,7 +351,7 @@ IotNetworkError_t IotNetworkAfr_Create(void *pConnectionInfo,
 
   /* Check for errors from DNS lookup. */
   if (serverAddress.ulAddress == 0) {
-    ESP_LOGE(TAG, "Failed to resolve %s.", pServerInfo->pHostName);
+    // ESP_LOGE(TAG, "Failed to resolve %s.", pServerInfo->pHostName);
     IOT_SET_AND_GOTO_CLEANUP(IOT_NETWORK_SYSTEM_ERROR);
   }
 

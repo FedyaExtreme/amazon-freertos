@@ -331,13 +331,13 @@ u8 *prvPAL_ReadAndAssumeCertificate(const u8 *const pucCertName,
                               ulSignerCertSize);
 
   if ((xResult == CKR_OK) && (pucSignerCert != NULL)) {
-    ESP_LOGI(TAG, "Using cert with label: %s OK\r\n",
-             (const char *)pucCertName);
+    // ESP_LOGI(TAG, "Using cert with label: %s OK\r\n",
+    //  (const char *)pucCertName);
   } else {
-    ESP_LOGI(TAG,
-             "No such certificate file: %s. Using "
-             "aws_ota_codesigner_certificate.h.\r\n",
-             (const char *)pucCertName);
+    // ESP_LOGI(TAG,
+    //          "No such certificate file: %s. Using "
+    //          "aws_ota_codesigner_certificate.h.\r\n",
+    //          (const char *)pucCertName);
 
     /* Allocate memory for the signer certificate plus a terminating zero so we
      * can copy it and return to the caller. */
@@ -496,8 +496,6 @@ OTA_Err_t prvPAL_ActivateNewImage(void) {
       ESP_LOGE(TAG, "esp_ota_end failed!");
       esp_partition_erase_range(ota_ctx.update_partition, 0,
                                 ota_ctx.update_partition->size);
-      esp_apptrace_flush(ESP_APPTRACE_DEST_TRAX, 10000);
-
       prvPAL_ResetDevice();
     }
 
@@ -509,12 +507,9 @@ OTA_Err_t prvPAL_ActivateNewImage(void) {
                                 ota_ctx.update_partition->size);
       _esp_ota_ctx_clear(&ota_ctx);
     }
-    esp_apptrace_flush(ESP_APPTRACE_DEST_TRAX, 10000);
 
     prvPAL_ResetDevice();
   }
-  esp_apptrace_flush(ESP_APPTRACE_DEST_TRAX, 10000);
-
   _esp_ota_ctx_clear(&ota_ctx);
   prvPAL_ResetDevice();
   return kOTA_Err_None;
@@ -545,7 +540,7 @@ OTA_PAL_ImageState_t prvPAL_GetPlatformImageState() {
   OTA_PAL_ImageState_t eImageState = eOTA_PAL_ImageState_Unknown;
   uint32_t ota_flags;
 
-  ESP_LOGI(TAG, "%s", __func__);
+  ESP_LOGD(TAG, "%s", __func__);
 
   if ((ota_ctx.cur_ota != NULL) && (ota_ctx.data_write_len != 0)) {
     /* Firmware update is complete or on-going, retrieve its status */
@@ -588,7 +583,7 @@ OTA_Err_t prvPAL_SetPlatformImageState(OTA_ImageState_t eState) {
   OTA_Err_t eResult = kOTA_Err_None;
   int state;
 
-  ESP_LOGI(TAG, "%s, %d", __func__, eState);
+  ESP_LOGD(TAG, "%s, %d", __func__, eState);
 
   switch (eState) {
   case eOTA_ImageState_Accepted:

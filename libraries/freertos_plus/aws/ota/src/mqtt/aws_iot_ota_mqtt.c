@@ -230,8 +230,8 @@ prvSubscribeToJobNotificationTopics(const OTA_AgentContext_t *pxAgentCtx) {
                stJobsSubscription.pTopicFilter);
       bResult = true;
     } else {
-      ESP_LOGE(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
-               stJobsSubscription.pTopicFilter);
+      // ESP_LOGE(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
+      //          stJobsSubscription.pTopicFilter);
     }
   }
 
@@ -272,10 +272,11 @@ static bool prvUnSubscribeFromDataStream(const OTA_AgentContext_t *pxAgentCtx) {
               &xUnSub, 1, /* Subscriptions count */
               0,          /* flags */
               OTA_UNSUBSCRIBE_WAIT_MS) != IOT_MQTT_SUCCESS) {
-        ESP_LOGI(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
-                 pcOTA_RxStreamTopic);
+        // ESP_LOGI(TAG, "[%s] Failed: %s\n\r", OTA_METHOD_NAME,
+        //          pcOTA_RxStreamTopic);
       } else {
-        ESP_LOGI(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME, pcOTA_RxStreamTopic);
+        // ESP_LOGI(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME,
+        // pcOTA_RxStreamTopic);
         bResult = true;
       }
     } else {
@@ -315,9 +316,10 @@ prvUnSubscribeFromJobNotificationTopic(const OTA_AgentContext_t *pxAgentCtx) {
                             IOT_MQTT_FLAG_WAITABLE, /* flags */
                             NULL, &(paUnubscribeOperation[0])) !=
         IOT_MQTT_STATUS_PENDING) {
-      ESP_LOGI(TAG, "[%s] FAIL: %s\n\r", OTA_METHOD_NAME, xUnSub.pTopicFilter);
+      // ESP_LOGI(TAG, "[%s] FAIL: %s\n\r", OTA_METHOD_NAME,
+      // xUnSub.pTopicFilter);
     } else {
-      ESP_LOGI(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME, xUnSub.pTopicFilter);
+      // ESP_LOGI(TAG, "[%s] OK: %s\n\r", OTA_METHOD_NAME, xUnSub.pTopicFilter);
     }
   }
 
@@ -406,31 +408,31 @@ static OTA_Err_t prvPublishStatusMessage(OTA_AgentContext_t *pxAgentCtx,
 
   /* If the topic name was built, try to publish the status message to it. */
   if ((ulTopicLen > 0UL) && (ulTopicLen < sizeof(pcTopicBuffer))) {
-    for (size_t i = 0; i < ulMsgSize; i++) {
-      ESP_LOGI(TAG, "[%s] Msg: %c \r\n", OTA_METHOD_NAME, pcMsg[i]);
-    }
+    // for (size_t i = 0; i < ulMsgSize; i++) {
+    //   // ESP_LOGI(TAG, "[%s] Msg: %c \r\n", OTA_METHOD_NAME, pcMsg[i]);
+    // }
 
     eResult = prvPublishMessage(pxAgentCtx, pcTopicBuffer, (uint16_t)ulTopicLen,
                                 &pcMsg[0], ulMsgSize, eQOS);
 
     if (eResult != IOT_MQTT_SUCCESS) {
-      ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+      // ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
 
       eResult =
           prvPublishMessage(pxAgentCtx, pcTopicBuffer, (uint16_t)ulTopicLen,
                             &pcMsg[0], ulMsgSize, eQOS);
       if (eResult != IOT_MQTT_SUCCESS) {
-        ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+        // ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
         xRet = kOTA_Err_PublishFailed;
       } else {
-        ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
-                 pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
+        // ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
+        //          pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
 
         xRet = kOTA_Err_None;
       }
     } else {
-      ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
-               pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
+      // ESP_LOGI(TAG, "[%s] '%s' to %s\r\n", OTA_METHOD_NAME,
+      //          pcOTA_JobStatus_Strings[eStatus], pcTopicBuffer);
 
       xRet = kOTA_Err_None;
     }
@@ -851,10 +853,10 @@ OTA_Err_t prvRequestFileBlock_Mqtt(OTA_AgentContext_t *pxAgentCtx) {
                                 &pcMsg[0], ulMsgSizeToPublish, IOT_MQTT_QOS_0);
 
     if (eResult != IOT_MQTT_SUCCESS) {
-      ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+      // ESP_LOGE(TAG, "[%s] Failed: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
       xErr = kOTA_Err_PublishFailed;
     } else {
-      ESP_LOGI(TAG, "[%s] OK: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
+      // ESP_LOGI(TAG, "[%s] OK: %s\r\n", OTA_METHOD_NAME, pcTopicBuffer);
       xErr = kOTA_Err_None;
     }
   }

@@ -564,8 +564,8 @@ static IotMqttError_t _subscriptionCommon(
   /* Check that a reference pointer is provided for a waitable operation. */
   if ((flags & IOT_MQTT_FLAG_WAITABLE) == IOT_MQTT_FLAG_WAITABLE) {
     if (pOperationReference == NULL) {
-      ESP_LOGE(TAG, "Reference must be provided for a waitable %s.",
-               IotMqtt_OperationType(operation));
+      // ESP_LOGE(TAG, "Reference must be provided for a waitable %s.",
+      //          IotMqtt_OperationType(operation));
 
       IOT_SET_AND_GOTO_CLEANUP(IOT_MQTT_BAD_PARAMETER);
     } else {

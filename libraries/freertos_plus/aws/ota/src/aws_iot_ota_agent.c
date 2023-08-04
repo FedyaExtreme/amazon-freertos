@@ -420,11 +420,11 @@ static BaseType_t prvStartSelfTestTimer(void) {
     /* Common check for whether the timer was started or not. It should be
      * impossible to not start. */
     if (xTimerStarted == pdTRUE) {
-      ESP_LOGI(TAG, "[%s] Starting %s timer.\r\n", OTA_METHOD_NAME,
-               pcTimerName);
+      // ESP_LOGI(TAG, "[%s] Starting %s timer.\r\n", OTA_METHOD_NAME,
+      //          pcTimerName);
     } else {
-      ESP_LOGE(TAG, "[%s] ERROR: failed to reset/start %s timer.\r\n",
-               OTA_METHOD_NAME, pcTimerName);
+      // ESP_LOGE(TAG, "[%s] ERROR: failed to reset/start %s timer.\r\n",
+      //          OTA_METHOD_NAME, pcTimerName);
     }
   }
 
@@ -492,10 +492,11 @@ static void prvStartRequestTimer(uint32_t xPeriodMS) {
   }
 
   if (xTimerStarted == pdTRUE) {
-    ESP_LOGW(TAG, "[%s] Starting %s timer.\r\n", OTA_METHOD_NAME, pcTimerName);
+    // ESP_LOGW(TAG, "[%s] Starting %s timer.\r\n", OTA_METHOD_NAME,
+    // pcTimerName);
   } else {
-    ESP_LOGE(TAG, "[%s] ERROR: failed to reset/start %s timer.\r\n",
-             OTA_METHOD_NAME, pcTimerName);
+    // ESP_LOGE(TAG, "[%s] ERROR: failed to reset/start %s timer.\r\n",
+    //          OTA_METHOD_NAME, pcTimerName);
   }
 }
 
@@ -1664,12 +1665,13 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
           if (pxValTok->type != pxModelParam[usModelParamIndex].eJasmineType) {
             ulTokenLen =
                 (uint32_t)(pxValTok->end) - (uint32_t)(pxValTok->start);
-            ESP_LOGE(TAG,
-                     "[%s] parameter type mismatch [ %s : %.*s ] type %u, "
-                     "expected %u\r\n",
-                     OTA_METHOD_NAME, pxModelParam[usModelParamIndex].pcSrcKey,
-                     ulTokenLen, &pcJSON[pxValTok->start], pxValTok->type,
-                     pxModelParam[usModelParamIndex].eJasmineType);
+            // ESP_LOGE(TAG,
+            //          "[%s] parameter type mismatch [ %s : %.*s ] type %u, "
+            //          "expected %u\r\n",
+            //          OTA_METHOD_NAME,
+            //          pxModelParam[usModelParamIndex].pcSrcKey, ulTokenLen,
+            //          &pcJSON[pxValTok->start], pxValTok->type,
+            //          pxModelParam[usModelParamIndex].eJasmineType);
             eErr = eDocParseErr_FieldTypeMismatch;
           } else if (OTA_DONT_STORE_PARAM ==
                      pxModelParam[usModelParamIndex].ulDestOffset) {
@@ -1705,10 +1707,10 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
                              ulTokenLen);
                 /* Zero terminate the new string. */
                 pcStringCopy[ulTokenLen] = '\0';
-                ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %s ]\r\n",
-                         OTA_METHOD_NAME,
-                         pxModelParam[usModelParamIndex].pcSrcKey,
-                         pcStringCopy);
+                // ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %s ]\r\n",
+                //          OTA_METHOD_NAME,
+                //          pxModelParam[usModelParamIndex].pcSrcKey,
+                //          pcStringCopy);
               } else { /* Stop processing on error. */
                 eErr = eDocParseErr_OutOfMemory;
               }
@@ -1720,10 +1722,10 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
               *xParamAddr.ppccPtr = pcStringInDoc;
               ulTokenLen =
                   (uint32_t)(pxValTok->end) - (uint32_t)(pxValTok->start);
-              ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %.*s ]\r\n",
-                       OTA_METHOD_NAME,
-                       pxModelParam[usModelParamIndex].pcSrcKey, ulTokenLen,
-                       pcStringInDoc);
+              // ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %.*s ]\r\n",
+              //          OTA_METHOD_NAME,
+              //          pxModelParam[usModelParamIndex].pcSrcKey, ulTokenLen,
+              //          pcStringInDoc);
             } else if (eModelParamType_UInt32 ==
                        pxModelParam[usModelParamIndex].xModelParamType) {
               char *pEnd;
@@ -1731,10 +1733,10 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
               *xParamAddr.pulPtr = strtoul(pStart, &pEnd, 0);
 
               if (pEnd == &pcJSON[pxValTok->end]) {
-                ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %u ]\r\n",
-                         OTA_METHOD_NAME,
-                         pxModelParam[usModelParamIndex].pcSrcKey,
-                         *xParamAddr.pulPtr);
+                // ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %u ]\r\n",
+                //          OTA_METHOD_NAME,
+                //          pxModelParam[usModelParamIndex].pcSrcKey,
+                //          *xParamAddr.pulPtr);
               } else {
                 eErr = eDocParseErr_InvalidNumChar;
               }
@@ -1759,10 +1761,11 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
                   eErr = eDocParseErr_Base64Decode;
                 } else {
                   pxSig256->usSize = (uint16_t)xActualLen;
-                  ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %.32s... ]\r\n",
-                           OTA_METHOD_NAME,
-                           pxModelParam[usModelParamIndex].pcSrcKey,
-                           &pcJSON[pxValTok->start]);
+                  // ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %.32s...
+                  // ]\r\n",
+                  //          OTA_METHOD_NAME,
+                  //          pxModelParam[usModelParamIndex].pcSrcKey,
+                  //          &pcJSON[pxValTok->start]);
                 }
               } else {
                 /* We failed to allocate needed memory. Everything will be freed
@@ -1771,9 +1774,9 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
               }
             } else if (eModelParamType_Ident ==
                        pxModelParam[usModelParamIndex].xModelParamType) {
-              ESP_LOGE(TAG, "[%s] Identified parameter [ %s ]\r\n",
-                       OTA_METHOD_NAME,
-                       pxModelParam[usModelParamIndex].pcSrcKey);
+              // ESP_LOGE(TAG, "[%s] Identified parameter [ %s ]\r\n",
+              //          OTA_METHOD_NAME,
+              //          pxModelParam[usModelParamIndex].pcSrcKey);
               *xParamAddr.pbBoolPtr = true;
             }
 
@@ -1793,10 +1796,10 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
                              ulTokenLen);
                 /* Zero terminate the new string. */
                 pcStringCopy[ulTokenLen] = '\0';
-                ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %s ]\r\n",
-                         OTA_METHOD_NAME,
-                         pxModelParam[usModelParamIndex].pcSrcKey,
-                         pcStringCopy);
+                // ESP_LOGE(TAG, "[%s] Extracted parameter [ %s: %s ]\r\n",
+                //          OTA_METHOD_NAME,
+                //          pxModelParam[usModelParamIndex].pcSrcKey,
+                //          pcStringCopy);
               } else { /* Stop processing on error. */
                 eErr = eDocParseErr_OutOfMemory;
               }
@@ -1830,8 +1833,9 @@ static DocParseErr_t prvParseJSONbyModel(const char *pcJSON, uint32_t ulMsgLen,
       for (ulScanIndex = 0UL; ulScanIndex < pxDocModel->usNumModelParams;
            ulScanIndex++) {
         if ((ulMissingParams & (1UL << ulScanIndex)) != 0UL) {
-          ESP_LOGE(TAG, "[%s] parameter not present: %s\r\n", OTA_METHOD_NAME,
-                   pxModelParam[ulScanIndex].pcSrcKey);
+          // ESP_LOGE(TAG, "[%s] parameter not present: %s\r\n",
+          // OTA_METHOD_NAME,
+          //          pxModelParam[ulScanIndex].pcSrcKey);
         }
       }
 
@@ -2666,10 +2670,10 @@ static void prvHandleUnexpectedEvents(OTA_EventMsg_t *pxEventMsg) {
 
   configASSERT(pxEventMsg);
 
-  ESP_LOGI(TAG,
-           "[%s] Unexpected Event. Current State [%s] Received Event  [%s] \n",
-           OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
-           pcOTA_Event_Strings[pxEventMsg->xEventId]);
+  // ESP_LOGI(TAG,
+  //  "[%s] Unexpected Event. Current State [%s] Received Event  [%s] \n",
+  //  OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
+  //  pcOTA_Event_Strings[pxEventMsg->xEventId]);
 
   /* Perform any cleanup operations required for specifc unhandled events.*/
   switch (pxEventMsg->xEventId) {
@@ -2707,24 +2711,25 @@ static void prvExecuteHandler(uint32_t index,
     xErr = OTATransitionTable[index].xHandler(pxEventMsg->pxEventData);
 
     if (xErr == kOTA_Err_None) {
-      ESP_LOGI(
-          TAG,
-          "[%s] Called handler. Current State [%s] Event [%s] New state [%s] "
-          "\n",
-          OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
-          pcOTA_Event_Strings[pxEventMsg->xEventId],
-          pcOTA_AgentState_Strings[OTATransitionTable[index].xNextState]);
+      // ESP_LOGI(
+      //     TAG,
+      //     "[%s] Called handler. Current State [%s] Event [%s] New state [%s]
+      //     "
+      //     "\n",
+      //     OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
+      //     pcOTA_Event_Strings[pxEventMsg->xEventId],
+      //     pcOTA_AgentState_Strings[OTATransitionTable[index].xNextState]);
 
       /*
        * Update the current state in OTA agent context.
        */
       xOTA_Agent.eState = OTATransitionTable[index].xNextState;
     } else {
-      ESP_LOGE(TAG,
-               "[%s] Handler failed. Current State [%s] Event  [%s] Error "
-               "Code [%d] \n",
-               OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
-               pcOTA_Event_Strings[pxEventMsg->xEventId], xErr);
+      // ESP_LOGE(TAG,
+      //          "[%s] Handler failed. Current State [%s] Event  [%s] Error "
+      //          "Code [%d] \n",
+      //          OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState],
+      //          pcOTA_Event_Strings[pxEventMsg->xEventId], xErr);
     }
   }
 }
@@ -2758,9 +2763,9 @@ static void prvOTAAgentTask(void *pvUnused) {
         if (((OTATransitionTable[i].xCurrentState == xOTA_Agent.eState) ||
              (OTATransitionTable[i].xCurrentState == eOTA_AgentState_All)) &&
             (OTATransitionTable[i].xEventId == xEventMsg.xEventId)) {
-          ESP_LOGI(TAG, "[%s] , State matched [%s],  Event matched  [%s]\n",
-                   OTA_METHOD_NAME, pcOTA_AgentState_Strings[i],
-                   pcOTA_Event_Strings[i]);
+          // ESP_LOGI(TAG, "[%s] , State matched [%s],  Event matched  [%s]\n",
+          //          OTA_METHOD_NAME, pcOTA_AgentState_Strings[i],
+          //          pcOTA_Event_Strings[i]);
 
           /*
            * Execute the handler function.
@@ -3025,8 +3030,8 @@ OTA_State_t OTA_AgentShutdown(TickType_t xTicksToWait) {
       }
     }
   } else {
-    ESP_LOGE(TAG, "[%s] Nothing to do: Already in state [%s]\r\n",
-             OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState]);
+    // ESP_LOGE(TAG, "[%s] Nothing to do: Already in state [%s]\r\n",
+    //          OTA_METHOD_NAME, pcOTA_AgentState_Strings[xOTA_Agent.eState]);
   }
 
   ESP_LOGE(TAG, "[%s] End: %u ticks\r\n", OTA_METHOD_NAME, xTicksToWait);
