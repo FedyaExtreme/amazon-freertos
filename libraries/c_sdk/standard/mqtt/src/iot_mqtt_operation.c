@@ -613,12 +613,12 @@ void _IotMqtt_ProcessKeepAlive(IotTaskPool_t pTaskPool,
     elapsedTime = IotClock_GetTimeMs() - pMqttConnection->lastMessageTime;
 
     if (elapsedTime < (uint64_t)pMqttConnection->keepAliveMs) {
-      ESP_LOGI(
-          TAG,
-          "(MQTT connection %p) Connection was last used %llu ms ago, which "
-          "is less than keep-alive period %lu ms. PINGREQ will not be sent.",
-          pMqttConnection, (unsigned long long)elapsedTime,
-          (unsigned long)pMqttConnection->keepAliveMs);
+      // ESP_LOGI(
+      //     TAG,
+      //     "(MQTT connection %p) Connection was last used %llu ms ago, which "
+      //     "is less than keep-alive period %lu ms. PINGREQ will not be sent.",
+      //     pMqttConnection, (unsigned long long)elapsedTime,
+      //     (unsigned long)pMqttConnection->keepAliveMs);
 
       /* Schedule the next keep-alive job one keep-alive period after the last
        * packet was sent. */
@@ -750,10 +750,10 @@ void _IotMqtt_ProcessKeepAlive(IotTaskPool_t pTaskPool,
   /* Close the connection on failures. */
   if (status == false) {
     // if (retry_count >= 3) {
-    //   _IotMqtt_CloseNetworkConnection(IOT_MQTT_KEEP_ALIVE_TIMEOUT,
-    //                                   pMqttConnection);
-    //   /* Keep-alive has failed and will no longer use this MQTT connection.
-    //   */ _IotMqtt_DecrementConnectionReferences(pMqttConnection);
+      // _IotMqtt_CloseNetworkConnection(IOT_MQTT_KEEP_ALIVE_TIMEOUT,
+      //                                 pMqttConnection);
+      // /* Keep-alive has failed and will no longer use this MQTT connection.
+      // */ _IotMqtt_DecrementConnectionReferences(pMqttConnection);
     // }
   } else {
     EMPTY_ELSE_MARKER;
