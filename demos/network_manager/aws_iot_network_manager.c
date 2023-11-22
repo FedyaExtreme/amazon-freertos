@@ -72,7 +72,6 @@
 #endif
 
 #include "esp_log.h"
-#include "nvs_driver.h"
 #define _NM_PARAMS(networkType, networkState)                                  \
   (((uint32_t)networkType) << 16 | ((uint16_t)networkState))
 
@@ -316,14 +315,14 @@ static bool _bleEnable(void) {
   bool ret = true;
   static bool bleInited = false;
   BTStatus_t status;
-
+  ESP_LOGI(TAG, "Ble init");
   bleNetwork.state = eNetworkStateDisabled;
 
   if (bleInited == false) {
     if (IotBle_Init() == eBTStatusSuccess) {
       bleInited = true;
     } else {
-      IotLogError("Failed to initialize BLE.");
+      ESP_LOGE(TAG, "Failed to initialize BLE.");
       ret = false;
     }
   }
@@ -332,7 +331,7 @@ static bool _bleEnable(void) {
     status = IotBle_On();
 
     if (status != eBTStatusSuccess) {
-      IotLogError("Failed to toggle BLE on.");
+      ESP_LOGE(TAG,"Failed to toggle BLE on.");
       ret = false;
     }
   }
@@ -373,11 +372,11 @@ static void _bleConnectionCallback(BTStatus_t status, uint16_t connectionID,
   AwsIotNetworkState_t newState;
 
   if (isConnected == true) {
-    IotLogInfo("BLE Connected to remote device, connId = %d\n", connectionID);
+    ESP_LOGI(TAG,"BLE Connected to remote device, connId = %d\n", connectionID);
     IotBle_StopAdv(NULL);
     newState = eNetworkStateEnabled;
   } else {
-    IotLogInfo("BLE disconnected with remote device, connId = %d \n",
+    ESP_LOGI(TAG,"BLE disconnected with remote device, connId = %d \n",
                connectionID);
     (void)IotBle_StartAdv(NULL);
     newState = eNetworkStateDisabled;
@@ -541,12 +540,12 @@ static void _wifiEventHandler(WIFIEvent_t *pxEvent) {
 
   if (pxEvent->xEventType == eWiFiEventIPReady) {
     pucIpAddr = (uint8_t *)(&pxEvent->xInfo.xIPReady.xIPAddress.ulAddress[0]);
-    IotLogInfo("Connected to WiFi access point, ip address: %d.%d.%d.%d.",
+    ESP_LOGI(TAG,"Connected to WiFi access point, ip address: %d.%d.%d.%d.",
                pucIpAddr[0], pucIpAddr[1], pucIpAddr[2], pucIpAddr[3]);
     onNetworkStateChangeCallback(AWSIOT_NETWORK_TYPE_WIFI,
                                  eNetworkStateEnabled);
   } else if (pxEvent->xEventType == eWiFiEventDisconnected) {
-    IotLogInfo("Disconnected from WiFi access point, reason code: %d.",
+    ESP_LOGI(TAG,"Disconnected from WiFi access point, reason code: %d.",
                pxEvent->xInfo.xDisconnected.xReason);
     onNetworkStateChangeCallback(AWSIOT_NETWORK_TYPE_WIFI,
                                  eNetworkStateDisabled);
@@ -765,7 +764,7 @@ BaseType_t AwsIotNetworkManager_SubscribeForStateChange(
 
     ret = pdTRUE;
   } else {
-    IotLogError(" Not enough memory to add new subscription");
+    ESP_LOGE(TAG," Not enough memory to add new subscription");
   }
 
   return ret;
