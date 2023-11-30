@@ -90,6 +90,7 @@ void DEMO_RUNNER_RunDemos( void )
     };
 
     Iot_CreateDetachedThread( runDemoTask,
+                              "run_demo",
                               &mqttDemoContext,
                               config_PRIORITY,
                               config_STACKSIZE );
